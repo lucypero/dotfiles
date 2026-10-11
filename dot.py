@@ -191,6 +191,8 @@ def cmd_save(args):
             print(f"{name}: no path for {PLATFORM}, skipped")
             continue
         print(f"{name}:")
+        if all(file_state(s, r) == "same" for _, s, r in files):
+            print("    up to date")
         for rel, sys_file, repo_file in files:
             state = file_state(sys_file, repo_file)
             if state in ("modified", "system only"):
@@ -214,6 +216,8 @@ def cmd_apply(args):
             print(f"{name}: no path for {PLATFORM}, skipped")
             continue
         print(f"{name}:")
+        if all(file_state(s, r) == "same" for _, s, r in files):
+            print("    up to date")
         for rel, sys_file, repo_file in files:
             state = file_state(sys_file, repo_file)
             if state == "modified":
