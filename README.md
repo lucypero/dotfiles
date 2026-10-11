@@ -11,7 +11,7 @@ On Windows, `python` may point at Python 2. If it does, use `py -3` or `python3`
 ## New machine
 
 ```sh
-git clone https://github.com/<you>/dotfiles ~/dotfiles
+git clone https://github.com/lucypero/dotfiles ~/dotfiles
 cd ~/dotfiles
 python3 dot.py apply --dry-run   # see what would change
 python3 dot.py apply
