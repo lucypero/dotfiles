@@ -3,7 +3,7 @@
 alias e = zed
 alias f = cd (open --raw ~\docs\bookmarks | fzf)
 alias ef = e (open --raw ~\docs\bookmarks | fzf)
-alias ba = (echo $"($env.PWD)\n" | save ~\docs\bookmarks --append)
+def ba [] { $"($env.PWD)\n" | save ~\docs\bookmarks --append }
 alias c = cargo
 
 # play lucynes
@@ -19,7 +19,7 @@ alias ece = e $nu.env-path
 alias ecn = e $nu.config-path
 alias ecw = e ~\.wezterm.lua
 
-let-env FZF_DEFAULT_OPTS = "--color=hl:#ffb8f6,fg+:-1,hl+:#ffb8f6,info:#ffb8f6,prompt:#ffb8f6,pointer:#ff91f0,marker:-1,spinner:#ffb8f6,header:#ffb8f6,bg:-1,bg+:-1"
+$env.FZF_DEFAULT_OPTS = "--color=hl:#ffb8f6,fg+:-1,hl+:#ffb8f6,info:#ffb8f6,prompt:#ffb8f6,pointer:#ff91f0,marker:-1,spinner:#ffb8f6,header:#ffb8f6,bg:-1,bg+:-1"
 
 alias config = git $"--git-dir=($env.USERPROFILE)/.cfg/" $"--work-tree=($env.USERPROFILE)"
 alias lg = lazygit
@@ -79,15 +79,12 @@ let dark_theme = {
 }
 
 # The default config record. This is where much of your global configuration is setup.
-let-env config = {
+$env.config = {
   ls: {
     use_ls_colors: true
   }
   rm: {
     always_trash: false
-  }
-  cd: {
-    abbreviations: false # set to true to allow you to do things like cd s/o/f and nushell expand it to cd some/other/folder
   }
   table: {
     mode: rounded
@@ -115,33 +112,16 @@ let-env config = {
     }
   }
   filesize: {
-    metric: false
-    format: "auto" # b, kb, kib, mb, mib, gb, gib, tb, tib, pb, pib, eb, eib, zb, zib, auto
+    unit: binary # metric, binary, or a fixed unit like kb, kib, mb, mib
   }
   color_config: $dark_theme
-  use_grid_icons: true
-  footer_mode: "25" # always, never, number_of_rows, auto
+  footer_mode: 25 # always, never, number_of_rows, auto
   float_precision: 2
   buffer_editor: "nvim"
   use_ansi_coloring: true
   edit_mode: vi
-  shell_integration: false
-  # A strategy of managing table view in case of limited space.
   show_banner: false # true or false to enable or disable the banner
 
-  hooks: {
-    pre_prompt: [{
-      $nothing  # replace with source code to run before the prompt is shown
-    }]
-    pre_execution: [{
-      $nothing  # replace with source code to run before the repl input is run
-    }]
-    env_change: {
-      PWD: [{|before, after|
-        $nothing  # replace with source code to run if the PWD environment is different since the last repl input
-      }]
-    }
-  }
   menus: [
       # Configuration for default nushell menus
       # Note the lack of souce parameter
@@ -212,9 +192,9 @@ let-env config = {
             description_text: yellow
         }
         source: { |buffer, position|
-            $nu.scope.commands
-            | where command =~ $buffer
-            | each { |it| {value: $it.command description: $it.usage} }
+            scope commands
+            | where name =~ $buffer
+            | each { |it| {value: $it.name description: $it.description} }
         }
       }
       {
@@ -231,7 +211,7 @@ let-env config = {
             description_text: yellow
         }
         source: { |buffer, position|
-            $nu.scope.vars
+            scope variables
             | where name =~ $buffer
             | sort-by name
             | each { |it| {value: $it.name description: $it.type} }
@@ -255,9 +235,9 @@ let-env config = {
             description_text: yellow
         }
         source: { |buffer, position|
-            $nu.scope.commands
-            | where command =~ $buffer
-            | each { |it| {value: $it.command description: $it.usage} }
+            scope commands
+            | where name =~ $buffer
+            | each { |it| {value: $it.name description: $it.description} }
         }
       }
   ]
