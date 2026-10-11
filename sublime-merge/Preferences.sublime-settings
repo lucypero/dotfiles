@@ -1,0 +1,13 @@
+{
+	"hardware_acceleration": "opengl",
+	"editor_argument_format": "${file}:${line}",
+	"editor_path": "E:\\dev\\third_party\\zed\\target\\release\\bin\\zed.exe",
+	"theme": "Merge Dark.sublime-theme",
+	"font_size": 11,
+	"diff_style": "inline",
+	"expand_untracked_files_by_default": true,
+	"hide_menu": false,
+	"render_commit_dialog_message_at_top": true,
+	"side_bar_layout": "columns",
+	"themed_title_bar": true,
+}

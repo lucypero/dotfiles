@@ -1,0 +1,18 @@
+{
+	"private": {
+		"body": ["@(private=\"file\")"]
+	},
+	"public-to-package": {
+		"body": ["@(private=\"package\")"]
+	},
+	"todo": {
+		"body": ["// TODO(lucy): "]
+	},
+	"note": {
+		"body": ["// NOTE(lucy): "]
+	},
+	"ta": {
+		"body": ["context.temp_allocator"],
+		"description": "SNIPPET: the temp allocator."
+	}
+}

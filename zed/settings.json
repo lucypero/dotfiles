@@ -1,0 +1,123 @@
+{
+	"cursor_animation": {
+  "enabled": true
+ },
+ "cli_default_open_behavior": "reuse_window",
+ "smooth_scroll": {
+  "enabled": true
+ },
+ "telemetry": {
+  "diagnostics": false,
+  "metrics": false,
+  "anthropic_retention": false
+ },
+ "auto_update": false,
+	"cli_default_open_behavior": "existing_window",
+	"project_panel": {
+		"dock": "left",
+	},
+	"outline_panel": {
+		"dock": "left",
+	},
+	"collaboration_panel": {
+		"dock": "left",
+	},
+	"agent": {
+		"dock": "right",
+		"favorite_models": [],
+		"model_parameters": [],
+	},
+	"icon_theme": {
+  "mode": "dark",
+  "light": "Zed (Default)",
+  "dark": "Zed (Default)"
+ },
+	"auto_signature_help": false, // ctrl-s on insert mode to manually pop it up
+	"show_signature_help_after_edits": true,
+	"git_panel": {
+		"dock": "left",
+		"tree_view": false,
+	},
+	"diagnostics": {
+		"lsp_pull_diagnostics": {
+			"enabled": true,
+		},
+	},
+	"theme": {
+		"mode": "dark",
+		"light": "One Light",
+		"dark": "Ayu Mirage",
+	},
+	"hard_tabs": true,
+	"tabs": {
+		"git_status": false,
+	},
+	"title_bar": {
+		"show_menus": false,
+	},
+	"terminal": {
+		"shell": {
+			"program": "nu",
+		},
+	},
+	"disable_ai": true,
+	"base_keymap": "VSCode",
+	"relative_line_numbers": "enabled",
+	"vim_mode": true,
+	"ui_font_size": 17,
+	"buffer_font_size": 15,
+	"buffer_font_features": { "calt": false }, // Disable ligatures
+	"autosave": "on_focus_change",
+	"formatter": null,
+	"format_on_save": "off",
+	"remove_trailing_whitespace_on_save": false,
+	"extend_comment_on_newline": false,
+	"languages": {
+		"JSON": {
+			"enable_language_server": false,
+			"tasks": {
+				"enabled": false,
+				"prefer_lsp": false,
+			},
+		},
+		"JSONC": { "enable_language_server": false },
+		"C": { "enable_language_server": false },
+		"HTML": { "enable_language_server": false },
+		"C++": { "enable_language_server": false },
+		"Markdown-Inline": { "enable_language_server": false },
+		"Markdown": {
+			"enable_language_server": false,
+			"completions": {
+				"words": "disabled",
+			},
+		},
+		"Odin": {
+			"format_on_save": "on",
+			"formatter": {
+				"external": {
+					"command": "E:\\dev\\lucyfmt\\lucyfmt.exe",
+				},
+			},
+		},
+		"HLSL": {
+			"format_on_save": "on",
+			"formatter": {
+				"external": {
+					"command": "E:\\dev\\lucyfmt\\lucyfmt.exe",
+				},
+			},
+		},
+	},
+	"git": {
+		"inline_blame": {
+			"enabled": false,
+		},
+	},
+	"lsp": {
+		"ols": {
+			"binary": {
+				"path": "E:\\dev\\third_party\\ols\\ols.exe",
+			},
+		},
+	},
+}

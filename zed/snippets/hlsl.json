@@ -1,0 +1,8 @@
+{
+	"todo": {
+		"body": ["// TODO(lucy): "]
+	},
+	"note": {
+		"body": ["// NOTE(lucy): "]
+	}
+}

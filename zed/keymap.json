@@ -1,0 +1,50 @@
+[
+	{
+		"context": "",
+		"bindings": {
+			"alt-j": "terminal_panel::Toggle",
+			"f4": "task::Rerun",
+			"shift-f4": "task::Spawn",
+		},
+	},
+	{
+		"context": "VimControl && !menu",
+		"bindings": {
+			"space s": "outline::Toggle",
+			"space k": "editor::Hover",
+			"g h": "editor::UndoSelection",
+			"g d": "editor::GoToDefinition",
+			"g t": "editor::GoToTypeDefinition",
+			"space v": "pane::SplitVertical",
+			"space o": "pane::JoinAll",
+			"space w": "workspace::ActivateNextPane",
+			"space r": "editor::Rename",
+			"ctrl-[": "editor::GoToPreviousDiagnostic",
+			"ctrl-]": "editor::GoToDiagnostic",
+			"space t": "workspace::ToggleLeftDock",
+			"space a": "editor::ToggleCodeActions",
+		},
+	},
+	{
+		"context": "Pane",
+		"bindings": {
+			"alt-=": "workspace::ToggleBottomDock",
+		},
+	},
+	{
+		"context": "Editor && vim_mode == normal",
+		"bindings": {},
+	},
+	{
+		"context": "(VimControl && !menu) || (!Editor && !Terminal)",
+		"bindings": {
+			"space q": "pane::CloseAllItems",
+		},
+	},
+	{
+		"context": "(VimControl && !menu) || (!Editor && !Terminal)",
+		"unbind": {
+			"ctrl-w a": "pane::CloseAllItems",
+		},
+	},
+]
