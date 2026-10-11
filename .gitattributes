@@ -1,0 +1,2 @@
+# Store configs byte-for-byte so they round-trip exactly between machines.
+* -text

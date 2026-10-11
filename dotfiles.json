@@ -1,0 +1,44 @@
+{
+  "configs": {
+    "zed": {
+      "paths": {
+        "windows": "$APPDATA/Zed",
+        "linux": "~/.config/zed",
+        "macos": "~/.config/zed"
+      },
+      "include": ["settings.json", "keymap.json", "tasks.json", "AGENTS.md", "snippets/*", "themes/*"]
+    },
+    "nushell": {
+      "paths": {
+        "windows": "$APPDATA/nushell",
+        "linux": "~/.config/nushell",
+        "macos": "~/Library/Application Support/nushell"
+      },
+      "include": ["config.nu", "env.nu", "scripts/*", "plugins/*"]
+    },
+    "wezterm": {
+      "paths": {
+        "windows": "~/.wezterm.lua",
+        "linux": "~/.wezterm.lua",
+        "macos": "~/.wezterm.lua"
+      },
+      "file": true
+    },
+    "mpv": {
+      "paths": {
+        "windows": "$SCOOP/persist/mpv/portable_config",
+        "linux": "~/.config/mpv",
+        "macos": "~/.config/mpv"
+      },
+      "include": ["mpv.conf", "input.conf", "scripts/*", "script-opts/*", "shaders/*", "fonts/*"]
+    },
+    "sublime-merge": {
+      "paths": {
+        "windows": "$SCOOP/persist/sublime-merge/Data/Packages/User",
+        "linux": "~/.config/sublime-merge/Packages/User",
+        "macos": "~/Library/Application Support/Sublime Merge/Packages/User"
+      },
+      "include": ["*.sublime-*"]
+    }
+  }
+}
