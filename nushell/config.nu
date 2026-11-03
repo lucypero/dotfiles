@@ -248,7 +248,7 @@ $env.config = {
       name: completion_menu
       modifier: none
       keycode: tab
-      mode: [emacs, vi_normal, vi_insert]
+      mode: [emacs, vi_normal, vi_insert] # edit_mode is vi, so emacs alone left Tab unbound
       event: {
         until: [
           { send: menu name: completion_menu }
@@ -304,7 +304,7 @@ $env.config = {
       name: unix-line-discard
       modifier: control
       keycode: char_u
-      mode: [emacs, vi_normal, vi_insert]
+      mode: [emacs, vi_normal, vi_insert] # edit_mode is vi, so emacs alone left Tab unbound
       event: {
         until: [
           {edit: cutfromlinestart}
@@ -315,7 +315,7 @@ $env.config = {
       name: kill-line
       modifier: control
       keycode: char_k
-      mode: [emacs, vi_normal, vi_insert]
+      mode: [emacs, vi_normal, vi_insert] # edit_mode is vi, so emacs alone left Tab unbound
       event: {
         until: [
           {edit: cuttolineend}
@@ -327,21 +327,21 @@ $env.config = {
       name: commands_menu
       modifier: control
       keycode: char_t
-      mode: [emacs, vi_normal, vi_insert]
+      mode: [emacs, vi_normal, vi_insert] # edit_mode is vi, so emacs alone left Tab unbound
       event: { send: menu name: commands_menu }
     }
     {
       name: commands_with_description
       modifier: control
       keycode: char_s
-      mode: [emacs, vi_normal, vi_insert]
+      mode: [emacs, vi_normal, vi_insert] # edit_mode is vi, so emacs alone left Tab unbound
       event: { send: menu name: commands_with_description }
     }
     {
       name: change_dir_with_fzf
       modifier: control
       keycode: char_f
-      mode: [emacs, vi_normal, vi_insert]
+      mode: [emacs, vi_normal, vi_insert] # edit_mode is vi, so emacs alone left Tab unbound
       event: {
         send: executehostcommand,
         cmd: 'cd (open --raw ~\docs\bookmarks | fzf)'
@@ -351,7 +351,7 @@ $env.config = {
       name: lf_cd
       modifier: control
       keycode: char_o
-      mode: [emacs, vi_normal, vi_insert]
+      mode: [emacs, vi_normal, vi_insert] # edit_mode is vi, so emacs alone left Tab unbound
       event: {
         send: executehostcommand,
         cmd: 'lf'
@@ -364,4 +364,19 @@ $env.config = {
 if ($nu.os-info.name == "windows") {
   $env.config.shell_integration.osc133 = false
   $env.config.shell_integration.osc633 = false
+}
+
+# Download English .srt subtitles for every movie under E:\Movies (see E:\Movies\download_subs.py)
+def download_subs [
+  root?: path              # folder to scan (default: E:\Movies)
+  --lang: string = "eng"   # OpenSubtitles 3-letter language code (eng, spa, ...)
+  --ext: string = "mp4"    # comma-separated video extensions, e.g. mp4,mkv
+  --force                  # overwrite existing .srt files
+  --dry-run                # show matches without downloading
+] {
+  mut args = ["--lang" $lang "--ext" $ext]
+  if $force { $args = ($args | append "--force") }
+  if $dry_run { $args = ($args | append "--dry-run") }
+  if $root != null { $args = ($args | append $root) }
+  ^py -3 'E:\Movies\download_subs.py' ...$args
 }
