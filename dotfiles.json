@@ -6,8 +6,7 @@
         "linux": "~/.config/zed",
         "macos": "~/.config/zed"
       },
-      "include": ["settings.json", "keymap.json", "tasks.json", "AGENTS.md", "snippets/*", "themes/*"],
-      "template": true
+      "include": ["settings.json", "keymap.json", "tasks.json", "AGENTS.md", "snippets/*", "themes/*"]
     },
     "nushell": {
       "paths": {

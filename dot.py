@@ -12,9 +12,7 @@ The tracked configs live in dotfiles.json. Each entry has a system path per
 platform (windows / linux / macos); paths may use ~ and environment variables
 like $APPDATA or $SCOOP. A path may be a single file or a directory; for a
 directory, `include` / `exclude` globs (relative, `/`-separated) pick the files.
-A platform may list several candidate paths (first one that exists wins), and a
-config with "template": true can use @@NAME@@ tokens filled in from
-~/.dotfiles-local.json, for values that differ per machine.
+A platform may list several candidate paths (first one that exists wins).
 
 `apply` backs up every file it would overwrite to ~/.dotfiles-backup/<time>/.
 """
@@ -24,7 +22,6 @@ import difflib
 import fnmatch
 import json
 import os
-import re
 import shutil
 import sys
 from datetime import datetime
@@ -91,41 +88,6 @@ def system_path(cfg):
     return chosen[0][0]
 
 
-# --- per-machine variables --------------------------------------------------
-# A config with "template": true may contain @@NAME@@ tokens. Their values come
-# from ~/.dotfiles-local.json ({"vars": {"NAME": "value"}}), so paths that
-# differ between machines (e.g. a dev drive) stay out of the repo.
-
-LOCAL = Path.home() / ".dotfiles-local.json"
-TOKEN = re.compile(rb"@@(\w+)@@")
-
-
-def local_vars(cfg):
-    if not cfg.get("template") or not LOCAL.exists():
-        return {}
-    with open(LOCAL, encoding="utf-8-sig") as f:
-        return json.load(f).get("vars", {})
-
-
-def to_repo(data, cfg):
-    """System file contents -> repo form (values replaced by tokens)."""
-    for name, value in local_vars(cfg).items():
-        data = data.replace(value.encode(), f"@@{name}@@".encode())
-    return data
-
-
-def to_system(data, cfg):
-    """Repo file contents -> system form (tokens replaced by values)."""
-    if not cfg.get("template"):
-        return data
-    values = local_vars(cfg)
-    for name in set(m.decode() for m in TOKEN.findall(data)):
-        if name not in values:
-            sys.exit(f"@@{name}@@ is used in the repo; define it under \"vars\" in {LOCAL}")
-        data = data.replace(f"@@{name}@@".encode(), values[name].encode())
-    return data
-
-
 def portable(path):
     """Turn an absolute path back into the ~ / $VAR form used in the manifest."""
     path = Path(path).resolve()
@@ -183,9 +145,9 @@ def pairs(name, cfg):
     return [(rel, sys_path / rel, repo_dir / rel) for rel in sorted(rels)]
 
 
-def file_state(sys_file, repo_file, cfg):
+def file_state(sys_file, repo_file):
     if sys_file.exists() and repo_file.exists():
-        return "same" if to_repo(sys_file.read_bytes(), cfg) == repo_file.read_bytes() else "modified"
+        return "same" if sys_file.read_bytes() == repo_file.read_bytes() else "modified"
     if sys_file.exists():
         return "system only"
     if repo_file.exists():
@@ -201,7 +163,7 @@ def cmd_status(args):
         if files is None:
             print(f"{name}: no path for {PLATFORM}, skipped")
             continue
-        states = [(rel, file_state(s, r, cfg)) for rel, s, r in files]
+        states = [(rel, file_state(s, r)) for rel, s, r in files]
         changed = [(rel, st) for rel, st in states if st != "same"]
         print(f"{name}: {'in sync' if not changed else f'{len(changed)} difference(s)'}"
               f"  ({system_path(cfg)})")
@@ -212,30 +174,27 @@ def cmd_status(args):
 def cmd_diff(args):
     for name, cfg in select(load_manifest(), args.names).items():
         for rel, sys_file, repo_file in pairs(name, cfg) or []:
-            if file_state(sys_file, repo_file, cfg) == "same":
+            if file_state(sys_file, repo_file) == "same":
                 continue
 
-            def lines(p, convert):
+            def lines(p):
                 if not p.exists():
                     return []
                 try:
-                    return convert(p.read_bytes(), cfg).decode("utf-8").splitlines(keepends=True)
+                    return p.read_text(encoding="utf-8").splitlines(keepends=True)
                 except UnicodeDecodeError:
                     return ["<binary file>\n"]
 
             sys.stdout.writelines(difflib.unified_diff(
-                lines(repo_file, lambda d, c: d), lines(sys_file, to_repo),
+                lines(repo_file), lines(sys_file),
                 f"repo/{name}/{rel}", f"system/{name}/{rel}"))
 
 
-def copy(src, dst, dry_run, convert=None):
+def copy(src, dst, dry_run):
     print(f"    {src} -> {dst}")
     if not dry_run:
         dst.parent.mkdir(parents=True, exist_ok=True)
-        if convert:
-            dst.write_bytes(convert(src.read_bytes()))
-        else:
-            shutil.copy2(src, dst)
+        shutil.copy2(src, dst)
 
 
 def cmd_save(args):
@@ -246,12 +205,12 @@ def cmd_save(args):
             print(f"{name}: no path for {PLATFORM}, skipped")
             continue
         print(f"{name}:")
-        if all(file_state(s, r, cfg) == "same" for _, s, r in files):
+        if all(file_state(s, r) == "same" for _, s, r in files):
             print("    up to date")
         for rel, sys_file, repo_file in files:
-            state = file_state(sys_file, repo_file, cfg)
+            state = file_state(sys_file, repo_file)
             if state in ("modified", "system only"):
-                copy(sys_file, repo_file, args.dry_run, lambda d: to_repo(d, cfg))
+                copy(sys_file, repo_file, args.dry_run)
             elif state == "repo only":
                 if args.prune:
                     print(f"    delete {repo_file}")
@@ -271,10 +230,10 @@ def cmd_apply(args):
             print(f"{name}: no path for {PLATFORM}, skipped")
             continue
         print(f"{name}:")
-        if all(file_state(s, r, cfg) == "same" for _, s, r in files):
+        if all(file_state(s, r) == "same" for _, s, r in files):
             print("    up to date")
         for rel, sys_file, repo_file in files:
-            state = file_state(sys_file, repo_file, cfg)
+            state = file_state(sys_file, repo_file)
             if state == "modified":
                 backup = backup_dir / name / rel
                 print(f"    backup {sys_file} -> {backup}")
@@ -283,7 +242,7 @@ def cmd_apply(args):
                     shutil.copy2(sys_file, backup)
                     backed_up = True
             if state in ("modified", "repo only"):
-                copy(repo_file, sys_file, args.dry_run, lambda d: to_system(d, cfg))
+                copy(repo_file, sys_file, args.dry_run)
     if backed_up:
         print(f"backups saved in {backup_dir}")
 

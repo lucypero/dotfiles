@@ -27,15 +27,9 @@ Merge are expected to be installed with scoop, so their configs go in
 
 - **WezTerm** detects the machine itself (battery = laptop, GPU type, whether
   the MSVC `nudevcmd.bat` wrapper and the dev folders exist). No setup needed.
-- **Zed** settings use `@@DEV@@` for the dev folder. Define it per machine in
-  `~/.dotfiles-local.json` before `apply`:
-
-  ```json
-  { "vars": { "DEV": "D:/dev" } }
-  ```
-
-  `save` turns the value back into `@@DEV@@`, so the repo stays machine-neutral.
-  The Zed `ols` binary path is not tracked; Zed's bundled `ols` is used.
+- **Zed** runs the `lucyfmt` formatter by name, so `lucyfmt` must be on `PATH`
+  on every machine. The `ols` binary path is not tracked; Zed's bundled `ols`
+  is used.
 - **Sublime Merge** uses the scoop portable data dir if the scoop app is
   installed, else `%APPDATA%\Sublime Merge`. It includes the Odin syntax
   package. `editor_path` is `zed`, so `zed` must be on `PATH`.
