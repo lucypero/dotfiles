@@ -6,7 +6,8 @@
         "linux": "~/.config/zed",
         "macos": "~/.config/zed"
       },
-      "include": ["settings.json", "keymap.json", "tasks.json", "AGENTS.md", "snippets/*", "themes/*"]
+      "include": ["settings.json", "keymap.json", "tasks.json", "AGENTS.md", "snippets/*", "themes/*"],
+      "template": true
     },
     "nushell": {
       "paths": {
@@ -34,11 +35,17 @@
     },
     "sublime-merge": {
       "paths": {
-        "windows": "$SCOOP/persist/sublime-merge/Data/Packages/User",
-        "linux": "~/.config/sublime-merge/Packages/User",
-        "macos": "~/Library/Application Support/Sublime Merge/Packages/User"
+        "windows": [
+          {
+            "path": "$SCOOP/persist/sublime-merge/Data/Packages",
+            "requires": "$SCOOP/apps/sublime-merge"
+          },
+          "$APPDATA/Sublime Merge/Packages"
+        ],
+        "linux": "~/.config/sublime-merge/Packages",
+        "macos": "~/Library/Application Support/Sublime Merge/Packages"
       },
-      "include": ["*.sublime-*"]
+      "include": ["User/*", "Odin/*"]
     }
   }
 }

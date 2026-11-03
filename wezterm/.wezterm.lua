@@ -2,24 +2,76 @@ local wezterm = require 'wezterm'
 local act = wezterm.action
 local scroll_strength = 5
 
+-- ── per-machine detection ──────────────────────────────────────────
+-- One config for every machine: anything that differs (desktop vs laptop,
+-- Windows vs elsewhere) is detected here, not hardcoded below.
+local is_windows = wezterm.target_triple:find('windows') ~= nil
+-- Desktops report no battery; laptops report at least one.
+local is_laptop = #wezterm.battery_info() > 0
+
+local function exists(path)
+  local f = io.open(path, 'r')
+  if f then f:close() return true end
+  return false
+end
+
+local function first_dir(candidates)
+  for _, dir in ipairs(candidates) do
+    if pcall(wezterm.read_dir, dir) then return dir end
+  end
+  return nil
+end
+
+-- nudevcmd.bat = vsinit.bat (MSVC env: CL/INCLUDE/LIB/PATH) + cd + nu.
+-- cmd /c so the wrapper exits with nu instead of dropping back to cmd.
+local msvc_nu = { 'cmd.exe', '/c', 'E:\\bin\\nudevcmd.bat' }
+local has_msvc_nu = is_windows and exists('E:\\bin\\nudevcmd.bat')
+
+local launch_menu = {
+  { label = 'Nushell',    args = { 'nu' } },
+  { label = 'PowerShell', args = { 'pwsh' } },
+}
+local default_prog = nil -- nil = the user's login shell
+if is_windows then
+  default_prog = has_msvc_nu and msvc_nu or { 'nu.exe' }
+  if has_msvc_nu then
+    table.insert(launch_menu, 1, { label = 'Nushell (MSVC dev)', args = msvc_nu })
+  end
+  table.insert(launch_menu, { label = 'Command Prompt', args = { 'cmd' } })
+  table.insert(launch_menu, { label = 'Ubuntu (WSL)', domain = { DomainName = 'WSL:Ubuntu' } })
+end
+
+-- Pick the GPU: a discrete card on a desktop (power is free), the integrated
+-- one on a laptop (keeps the dGPU asleep and the battery alive). Always Dx12,
+-- so adapter selection can never drift to Vulkan or the CPU "Basic Render
+-- Driver". Returns nil if nothing matches, and wezterm picks by itself.
+local function pick_gpu()
+  if not wezterm.gui then return nil end
+  local want = is_laptop and 'IntegratedGpu' or 'DiscreteGpu'
+  local fallback
+  for _, gpu in ipairs(wezterm.gui.enumerate_gpus()) do
+    if gpu.backend == 'Dx12' then
+      if gpu.device_type == want then return gpu end
+      if gpu.device_type ~= 'Cpu' then fallback = fallback or gpu end
+    end
+  end
+  return fallback
+end
+
 return {
   -- ── shells (ported from Windows Terminal profiles) ───────────────
-  -- nudevcmd.bat = vsinit.bat (MSVC env: CL/INCLUDE/LIB/PATH) + cd + nu.
-  -- cmd /c so the wrapper exits with nu instead of dropping back to cmd.
-  default_prog = { 'cmd.exe', '/c', 'E:\\bin\\nudevcmd.bat' },
-  default_cwd = 'E:\\dev\\dx12',
-  launch_menu = {
-    { label = 'Nushell (MSVC dev)', args = { 'cmd.exe', '/c', 'E:\\bin\\nudevcmd.bat' } },
-    { label = 'Nushell',            args = { 'nu' } },
-    { label = 'PowerShell',         args = { 'pwsh' } },
-    { label = 'Command Prompt',     args = { 'cmd' } },
-    { label = 'Ubuntu (WSL)',       domain = { DomainName = 'WSL:Ubuntu' } },
+  default_prog = default_prog,
+  default_cwd = first_dir {
+    'E:\\dev\\dx12',
+    'D:\\dev\\hookin',
   },
+  launch_menu = launch_menu,
   -- ── input latency ────────────────────────────────────────────────
   -- Dx12 backend instead of the ANGLE/OpenGL one (prefer_egl is only
   -- consulted by the OpenGL front end, so it no longer applies).
   front_end = 'WebGpu',
-  webgpu_power_preference = 'HighPerformance',
+  webgpu_power_preference = is_laptop and 'LowPower' or 'HighPerformance',
+  webgpu_preferred_adapter = is_windows and pick_gpu() or nil,
   -- Default is 60, which on a 144 Hz panel adds up to ~8 ms of waiting
   -- before a keypress is even drawn. Match the monitor instead.
   max_fps = 144,
@@ -32,17 +84,6 @@ return {
   default_cursor_style = 'SteadyBlock',
   -- No network check on startup.
   check_for_updates = false,
-  -- Pin the discrete card + Dx12 explicitly, so adapter selection can
-  -- never drift to the Vulkan path or the CPU "Basic Render Driver".
-  webgpu_preferred_adapter = (function()
-    if not wezterm.gui then return nil end
-    for _, gpu in ipairs(wezterm.gui.enumerate_gpus()) do
-      if gpu.backend == 'Dx12' and gpu.device_type == 'DiscreteGpu' then
-        return gpu
-      end
-    end
-    return nil
-  end)(),
   -- Default 3. After each read from the pty, wezterm sleeps this long to
   -- coalesce fragmented writes into one "frame" before parsing them. An
   -- echoed keystroke is a tiny chunk, so it always eats the full delay.

@@ -23,6 +23,7 @@
 			"ctrl-]": "editor::GoToDiagnostic",
 			"space t": "workspace::ToggleLeftDock",
 			"space a": "editor::ToggleCodeActions",
+			"space f": "text_finder::Toggle",
 		},
 	},
 	{
@@ -34,6 +35,12 @@
 	{
 		"context": "Editor && vim_mode == normal",
 		"bindings": {},
+	},
+	{
+		"context": "Editor && vim_mode == insert",
+		"bindings": {
+			"ctrl-v": "editor::Paste"
+		},
 	},
 	{
 		"context": "(VimControl && !menu) || (!Editor && !Terminal)",

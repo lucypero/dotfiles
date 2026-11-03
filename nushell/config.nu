@@ -246,7 +246,7 @@ $env.config = {
       name: completion_menu
       modifier: none
       keycode: tab
-      mode: emacs # Options: emacs vi_normal vi_insert
+      mode: [emacs, vi_normal, vi_insert]
       event: {
         until: [
           { send: menu name: completion_menu }
@@ -356,4 +356,10 @@ $env.config = {
       }
     }
   ]
+}
+
+# OSC 133/633 prompt marks confuse ConPTY on Windows: prompt redraws drift down a line per keystroke
+if ($nu.os-info.name == "windows") {
+  $env.config.shell_integration.osc133 = false
+  $env.config.shell_integration.osc633 = false
 }

@@ -1,7 +1,7 @@
 {
 	"hardware_acceleration": "opengl",
 	"editor_argument_format": "${file}:${line}",
-	"editor_path": "E:\\dev\\third_party\\zed\\target\\release\\bin\\zed.exe",
+	"editor_path": "zed",
 	"theme": "Merge Dark.sublime-theme",
 	"font_size": 11,
 	"diff_style": "inline",
