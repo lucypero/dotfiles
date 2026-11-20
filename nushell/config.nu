@@ -19,63 +19,65 @@ alias ece = e $nu.env-path
 alias ecn = e $nu.config-path
 alias ecw = e ~\.wezterm.lua
 
-$env.FZF_DEFAULT_OPTS = "--color=hl:#ffb8f6,fg+:-1,hl+:#ffb8f6,info:#ffb8f6,prompt:#ffb8f6,pointer:#ff91f0,marker:-1,spinner:#ffb8f6,header:#ffb8f6,bg:-1,bg+:-1"
+$env.FZF_DEFAULT_OPTS = "--color=hl:magenta,fg+:-1,hl+:magenta,info:magenta,prompt:magenta,pointer:magenta,marker:-1,spinner:magenta,header:magenta,bg:-1,bg+:-1"
 
 alias config = git $"--git-dir=($env.USERPROFILE)/.cfg/" $"--work-tree=($env.USERPROFILE)"
 alias lg = lazygit
 alias lconfig = lazygit $"--git-dir=($env.USERPROFILE)/.cfg/" $"--work-tree=($env.USERPROFILE)"
 
-let lucy_white = "#ffffff"
+# "default" = the terminal's own foreground (ESC[39m), so text stays readable
+# whether Zed/WezTerm is in a light or dark theme
+let lucy_fg = "default"
 let lucy_error = { fg: "#FFFFFF" bg: "#FF0000" attr: b}
 
-let dark_theme = {
+let lucy_theme = {
     # color for nushell primitives
-    separator: white
+    separator: $lucy_fg
     leading_trailing_space_bg: { attr: n } # no fg, no bg, attr none effectively turns this off
-    header: { fg: "#ffbdf6"}
+    header: magenta
     empty: blue
-    bool: white
-    int: white
-    filesize: white
-    duration: white
-    date: white
-    range: white
-    float: white
-    string: white
-    nothing: white
-    binary: white
-    cellpath: white
-    row_index: { fg: "#ffbdf6"}
-    record: white
-    list: white
-    block: white
+    bool: $lucy_fg
+    int: $lucy_fg
+    filesize: $lucy_fg
+    duration: $lucy_fg
+    date: $lucy_fg
+    range: $lucy_fg
+    float: $lucy_fg
+    string: $lucy_fg
+    nothing: $lucy_fg
+    binary: $lucy_fg
+    cellpath: $lucy_fg
+    row_index: magenta
+    record: $lucy_fg
+    list: $lucy_fg
+    block: $lucy_fg
     hints: dark_gray
 
     # shapes are used to change the cli syntax highlighting
     shape_garbage: $lucy_error
-    shape_binary: $lucy_white
-    shape_int: $lucy_white
-    shape_float: $lucy_white
-    shape_range: $lucy_white
-    shape_internalcall: $lucy_white
-    shape_external: $lucy_white
-    shape_externalarg: $lucy_white
-    shape_literal: $lucy_white
-    shape_operator: $lucy_white
-    shape_signature: $lucy_white
-    shape_string: $lucy_white
-    shape_string_interpolation: $lucy_white
-    shape_datetime: $lucy_white
-    shape_list: $lucy_white
-    shape_table: $lucy_white
-    shape_record: $lucy_white
-    shape_block: $lucy_white
-    shape_filepath: $lucy_white
-    shape_globpattern: $lucy_white
-    shape_variable: $lucy_white
-    shape_flag: $lucy_white
-    shape_custom: $lucy_white
-    shape_nothing: $lucy_white
+    shape_binary: $lucy_fg
+    shape_int: $lucy_fg
+    shape_float: $lucy_fg
+    shape_range: $lucy_fg
+    shape_internalcall: $lucy_fg
+    shape_external: $lucy_fg
+    shape_externalarg: $lucy_fg
+    shape_literal: $lucy_fg
+    shape_operator: $lucy_fg
+    shape_signature: $lucy_fg
+    shape_string: $lucy_fg
+    shape_string_interpolation: $lucy_fg
+    shape_datetime: $lucy_fg
+    shape_list: $lucy_fg
+    shape_table: $lucy_fg
+    shape_record: $lucy_fg
+    shape_block: $lucy_fg
+    shape_filepath: $lucy_fg
+    shape_globpattern: $lucy_fg
+    shape_variable: $lucy_fg
+    shape_flag: $lucy_fg
+    shape_custom: $lucy_fg
+    shape_nothing: $lucy_fg
 }
 
 # The default config record. This is where much of your global configuration is setup.
@@ -114,7 +116,7 @@ $env.config = {
   filesize: {
     unit: binary # metric, binary, or a fixed unit like kb, kib, mb, mib
   }
-  color_config: $dark_theme
+  color_config: $lucy_theme
   footer_mode: 25 # always, never, number_of_rows, auto
   float_precision: 2
   buffer_editor: "nvim"

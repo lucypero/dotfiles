@@ -28,7 +28,7 @@
 		"model_parameters": [],
 	},
 	"icon_theme": {
-  "mode": "dark",
+  "mode": "light",
   "light": "Zed (Default)",
   "dark": "Zed (Default)"
  },
@@ -44,7 +44,7 @@
 		},
 	},
 	"theme": {
-		"mode": "dark",
+		"mode": "light",
 		"light": "One Light",
 		"dark": "Ayu Mirage",
 	},
