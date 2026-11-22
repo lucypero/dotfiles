@@ -45,7 +45,7 @@
 		},
 	},
 	"theme": {
-		"mode": "dark",
+		"mode": "system",
 		"light": "One Light",
 		"dark": "Ayu Mirage",
 	},
