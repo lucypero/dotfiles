@@ -29,9 +29,9 @@
 		"model_parameters": [],
 	},
 	"icon_theme": {
-  "mode": "light",
-  "light": "Zed (Default)",
-  "dark": "Zed (Default)"
+		"mode": "system",
+	  "light": "Zed (Default)",
+	  "dark": "Zed (Default)"
  },
 	"auto_signature_help": false, // ctrl-s on insert mode to manually pop it up
 	"show_signature_help_after_edits": true,
@@ -45,7 +45,7 @@
 		},
 	},
 	"theme": {
-		"mode": "light",
+		"mode": "dark",
 		"light": "One Light",
 		"dark": "Ayu Mirage",
 	},
