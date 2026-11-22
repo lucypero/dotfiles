@@ -23,7 +23,8 @@
 		"dock": "left",
 	},
 	"agent": {
-		"dock": "right",
+		"terminal_init_command": "",
+  "dock": "right",
 		"favorite_models": [],
 		"model_parameters": [],
 	},
@@ -115,5 +116,8 @@
 	},
 	"vim": {
 		"use_system_clipboard": "on_yank",
-	}
+	},
+	"markdown_preview": {
+    "limit_content_width": false
+  }
 }
